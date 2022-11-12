@@ -1,6 +1,16 @@
 import pygame
 import sys
+import os
 import random, time
+
+def resource_path(relative_path):
+    try:
+    # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 def controll():
@@ -71,15 +81,19 @@ def score():
 
 def game_over():
     global points
+    track.stop()
+    track2 = pygame.mixer.Sound('12-нояб._-18.02_.mp3')
+    track2.play()
+
     game_over_run = True
     screen.fill((0, 0, 0))
 
-    image = pygame.image.load('maxresdefault.jpg')
+    ser_img = resource_path('maxresdefault.jpg')
+    image = pygame.image.load(ser_img)
     image = pygame.transform.scale(image, (WIDTH - 100, HEIGHT)).convert()
     game_over_rect = image.get_rect()
     game_over_rect.center = WIDTH // 2, HEIGHT // 2
     while game_over_run:
-        print()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -95,9 +109,7 @@ def game_over():
             screen.blit(image, game_over_rect)
             pygame.draw.rect(screen, (0, 0, 0), game_over_rect, 1)
             pygame.display.update()
-
-def sound():
-    pass
+    track.play()
 
 # Переменные для нашего экрана
 WIDTH = 720
@@ -121,7 +133,8 @@ pygame.display.set_caption("ЗМЕЙКА")
 
 # Переменные для изображения
 apple_pos = [0, 0]
-image = pygame.image.load("967b98f78113900.png")
+img_app = resource_path("967b98f78113900.png")
+image = pygame.image.load(img_app)
 image = pygame.transform.scale(image, (40, 40))
 image.convert()
 apple_rect = image.get_rect()
@@ -135,6 +148,10 @@ snake_stack = [[720//2 - 140, 480//2], [720//2 - 120, 480//2], [720//2 - 100, 48
                [720//2 - 60, 480//2], [720//2 - 50, 480//2], [720//2 - 40, 480//2],
                [720//2 - 30, 480//2], [720//2 - 20, 480//2], [720//2 - 10, 480//2]]
 
+# MAIN THEME
+track = pygame.mixer.Sound('toby_fox_-_megalovania_original_60999331.mp3')
+track.play(loops=0)
+
 running = True
 flag = True
 while running:
@@ -142,7 +159,7 @@ while running:
 
     # Создадим новое яблоко
     if abs(snake_pos[0] - apple_pos[0]) <= 15 and abs(snake_pos[1] - apple_pos[1]) <= 15:
-        image = pygame.image.load("967b98f78113900.png")
+        image = pygame.image.load(img_app)
         image = pygame.transform.scale(image, (40, 40))
         image.convert()
         apple_rect = image.get_rect()
@@ -192,6 +209,7 @@ while running:
             print(snake_stack)
             print(snake_pos)
             print(snake_size)
+
     # Обновление экрана
     pygame.display.update()
     pygame.time.Clock().tick(difficulty)
